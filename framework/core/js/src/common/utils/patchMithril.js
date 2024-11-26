@@ -120,7 +120,6 @@ export default function patchMithril(global) {
     if (comp === '__LINK__') {
       const attrs = args[0];
       const classes = (attrs.className ?? '').split(' ');
-      console.log(args.slice(1));
       return defaultMithril('a' + classes.map((v) => '.' + v).join(), defaultMithril.link(attrs.href, attrs.options), args.slice(1));
     } else if (isClass(comp)) {
       let func = componentFuncs.get(comp);
