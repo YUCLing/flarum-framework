@@ -347,12 +347,29 @@ export default class Application {
 
   protected mount(basePath: string = '') {
     // An object with a callable view property is used in order to pass arguments to the component; see https://mithril.js.org/mount.html
-    m.mount(document.getElementById('modal')!, { view: () => <ModalManager state={this.modal} /> });
-    m.mount(document.getElementById('alerts')!, { view: () => <AlertManager state={this.alerts} /> });
+    m.mount(document.getElementById('modal')!, () => <ModalManager state={this.modal} />);
+    m.mount(document.getElementById('alerts')!, () => <AlertManager state={this.alerts} />);
 
     this.drawer = new Drawer();
 
-    m.route(document.getElementById('content')!, basePath + '/', mapRoutes(this.routes, basePath));
+    const routes = mapRoutes(this.routes, basePath);
+    console.log(routes);
+    function RoutedApp() {
+      return () => m.route('/', ({route}) => {
+        for (const k in routes) {
+          let match;
+          if (match = route.match(k)) {
+            const r = routes[k];
+            r.onmatch(match, route.path, route.current);
+            console.log(r.component);
+            return m(r.component, {...match, routeName: r.routeName});
+          }
+        }
+
+        m.set('/');
+      });
+    }
+    m.mount(document.getElementById('content')!, () => <RoutedApp/>);
 
     const appEl = document.getElementById('app')!;
     const appHeaderEl = document.querySelector('.App-header')!;
@@ -548,13 +565,13 @@ export default class Application {
     // When extracting the data from the response, we can check the server
     // response code and show an error message to the user if something's gone
     // awry.
-    options.extract = (xhr: XMLHttpRequest) => {
+    options.extract = async (xhr: Response) => {
       let responseText;
 
       if (modifyText) {
-        responseText = modifyText(xhr.responseText);
+        responseText = modifyText(await xhr.text());
       } else {
-        responseText = xhr.responseText;
+        responseText = await xhr.text();
       }
 
       const status = xhr.status;
@@ -563,10 +580,8 @@ export default class Application {
         throw new RequestError<ResponseType>(status, `${responseText}`, options, xhr);
       }
 
-      if (xhr.getResponseHeader) {
-        const csrfToken = xhr.getResponseHeader('X-CSRF-Token');
-        if (csrfToken) app.session.csrfToken = csrfToken;
-      }
+      const csrfToken = xhr.headers.get('X-CSRF-Token');
+      if (csrfToken) app.session.csrfToken = csrfToken;
 
       try {
         if (responseText === '') {

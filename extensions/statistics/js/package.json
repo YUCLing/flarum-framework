@@ -8,7 +8,6 @@
     },
     "devDependencies": {
         "@flarum/prettier-config": "^1.0.0",
-        "@types/mithril": "^2.0.11",
         "flarum-tsconfig": "^2.0.0",
         "flarum-webpack-config": "^3.0.0",
         "prettier": "^2.7.1",

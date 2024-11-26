@@ -18,6 +18,7 @@ export default class DefaultResolver<
 {
   component: NewComponent<Comp> | AsyncNewComponent<Comp>;
   routeName: string;
+  params: RouteArgs = {} as RouteArgs;
 
   constructor(component: NewComponent<Comp> | AsyncNewComponent<Comp>, routeName: string) {
     this.component = component;
@@ -30,7 +31,7 @@ export default class DefaultResolver<
    * to prevent rerenders on some route changes.
    */
   makeKey(): string {
-    return this.routeName + JSON.stringify(m.route.param());
+    return this.routeName + JSON.stringify(this.params);
   }
 
   makeAttrs(vnode: Mithril.Vnode<Attrs, Comp>): Attrs & { routeName: string } {
@@ -41,6 +42,7 @@ export default class DefaultResolver<
   }
 
   async onmatch(args: RouteArgs, requestedPath: string, route: string): Promise<NewComponent<Comp>> {
+    this.params = args;
     if (this.component.prototype instanceof Component) {
       return this.component as NewComponent<Comp>;
     }

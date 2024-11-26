@@ -1,0 +1,4 @@
+[submodule "js-packages/mithril"]
+	path = js-packages/mithril
+	url = https://github.com/dead-claudia/mithril.js.git
+	branch = start-v3

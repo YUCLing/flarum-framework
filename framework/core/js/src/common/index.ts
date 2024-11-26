@@ -1,6 +1,8 @@
 // Expose jQuery, mithril and dayjs to the window browser object
+import m from 'mithril';
+(window as any).m = m;
 import 'expose-loader?exposes=$,jQuery!jquery';
-import 'expose-loader?exposes=m!mithril';
+//import 'expose-loader?exposes=m!mithril';
 import 'expose-loader?exposes=dayjs!dayjs';
 
 import 'bootstrap/js/affix';
