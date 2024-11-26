@@ -15,16 +15,16 @@ import Icon from './Icon';
 function isActive(vnode: Mithril.Children): boolean {
   if (!vnode || typeof vnode !== 'object' || vnode instanceof Array) return false;
 
-  const tag = vnode.tag;
+  const tag = vnode.t;
 
   // Allow non-selectable dividers/headers to be added.
   if (typeof tag === 'string' && tag !== 'a' && tag !== 'button') return false;
 
   if ((typeof tag === 'object' || typeof tag === 'function') && 'initAttrs' in tag) {
-    (tag as unknown as typeof Component).initAttrs(vnode.attrs);
+    (tag as unknown as typeof Component).initAttrs(vnode.a);
   }
 
-  return (typeof tag === 'object' || typeof tag === 'function') && 'isActive' in tag ? (tag as any).isActive(vnode.attrs) : vnode.attrs.active;
+  return (typeof tag === 'object' || typeof tag === 'function') && 'isActive' in tag ? (tag as any).isActive(vnode.a) : vnode.a.active;
 }
 
 export interface ISelectDropdownAttrs extends IDropdownAttrs {

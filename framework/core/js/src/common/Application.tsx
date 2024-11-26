@@ -353,7 +353,6 @@ export default class Application {
     this.drawer = new Drawer();
 
     const routes = mapRoutes(this.routes, basePath);
-    console.log(routes);
     function RoutedApp() {
       return () => m.route('/', ({route}) => {
         for (const k in routes) {
@@ -361,7 +360,6 @@ export default class Application {
           if (match = route.match(k)) {
             const r = routes[k];
             r.onmatch(match, route.path, route.current);
-            console.log(r.component);
             return m(r.component, {...match, routeName: r.routeName});
           }
         }

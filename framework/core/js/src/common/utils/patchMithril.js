@@ -1,3 +1,4 @@
+import LinkButton from '../components/LinkButton';
 import bidi from './bidi';
 
 function isClass(x) {
@@ -12,32 +13,33 @@ function createComponentFunc(comp) {
 
       const children = [
         m.init(() => {
-          console.log('init');
           inst.__inited = true;
           if (inst.oninit) {
             const initVnode = {
               attrs: {...attrs}
             };
+            delete initVnode.attrs._cInst;
             delete initVnode.attrs.children;
             inst.oninit.apply(inst, [initVnode]);
           }
         }),
         m.layout(function () {
-          console.log('layout');
           if (inst.setAttrs) {
             const setAttrs = {
               ...attrs
             };
+            delete setAttrs._cInst;
             delete setAttrs.children;
             inst.setAttrs(setAttrs);
           }
-          const createVnode = {
+          const layoutVnode = {
             attrs: {...attrs},
             dom: arguments[0]
           };
-          inst.oncreate.apply(inst, [createVnode]);
+          delete layoutVnode.attrs._cInst;
+          inst.oncreate.apply(inst, [layoutVnode]);
           if (inst.onupdate) {
-            children.push(m.layout(inst.onupdate.bind(inst)));
+            inst.onupdate.apply(inst, [layoutVnode]);
           }
         })
       ];
@@ -46,9 +48,17 @@ function createComponentFunc(comp) {
       }
       return (function() {
         if (!this.__inited) return children;
-        const viewArgs = [attrs, old, context];
-        attrs.attrs = {...attrs};
-        return [...children, this.view(...viewArgs)];
+        const viewAttrs = {...attrs};
+        delete viewAttrs._cInst;
+        const viewArgs = [{
+          attrs: viewAttrs,
+          ...viewAttrs
+        }, old, context];
+        const view = this.view(...viewArgs);
+        if (comp == LinkButton) {
+          view.t = 'a';
+        }
+        return [...children, view];
       }).apply(inst);
   }
 }
@@ -107,15 +117,17 @@ export default function patchMithril(global) {
   const modifiedMithril = function (comp, ...args) {
     const mArgs = [comp, ...args];
 
-    if (isClass(comp)) {
+    if (comp === '__LINK__') {
+      const attrs = args[0];
+      const classes = (attrs.className ?? '').split(' ');
+      console.log(args.slice(1));
+      return defaultMithril('a' + classes.map((v) => '.' + v).join(), defaultMithril.link(attrs.href, attrs.options), args.slice(1));
+    } else if (isClass(comp)) {
       let func = componentFuncs.get(comp);
       if (!func) {
         componentFuncs.set(comp, func = createComponentFunc(comp));
       }
       mArgs[0] = func;
-    } else if (comp === '__LINK__') {
-      const attrs = args[0];
-      return defaultMithril.link(attrs.href, attrs.options);
     }
 
     const node = defaultMithril.apply(this, mArgs);
