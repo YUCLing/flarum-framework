@@ -2,6 +2,23 @@ import type Mithril from 'mithril';
 
 export interface ComponentAttrs extends Mithril.Attributes {}
 
+interface Redraw {
+  (): typeof m.redraw,
+  sync: typeof m.redraw.sync
+}
+
+interface Context {
+  redraw: Redraw
+}
+
+interface RenderAttrs<Attrs = {}, State = {}> {
+  attrs: Attrs
+}
+
+interface RenderAttrsDOM<Attrs = {}, State = {}> extends RenderAttrs<Attrs, State> {
+  dom: HTMLElement
+}
+
 /**
  * The `Component` class defines a user interface 'building block'. A component
  * generates a virtual DOM to be rendered on each redraw.
@@ -29,7 +46,7 @@ export interface ComponentAttrs extends Mithril.Attributes {}
  *
  * @see https://mithril.js.org/components.html
  */
-export default abstract class Component<Attrs extends ComponentAttrs = ComponentAttrs, State = undefined> implements Mithril.ClassComponent<Attrs> {
+export default abstract class Component<Attrs extends ComponentAttrs = ComponentAttrs, State = undefined> {
   /**
    * The root DOM element for the component.
    */
@@ -55,46 +72,46 @@ export default abstract class Component<Attrs extends ComponentAttrs = Component
    */
   state!: State;
 
-  /**
-   * @inheritdoc
-   */
-  abstract view(vnode: Mithril.Vnode<Attrs, this>): Mithril.Children;
+  context!: Context;
 
   /**
    * @inheritdoc
    */
-  oninit(vnode: Mithril.Vnode<Attrs, this>) {
-    this.setAttrs(vnode.attrs);
+  abstract view(vnode: RenderAttrs<Attrs, this>): Mithril.Children;
+
+  /**
+   * @inheritdoc
+   */
+  oninit(vnode: RenderAttrs<Attrs, this>) {
   }
 
   /**
    * @inheritdoc
    */
-  oncreate(vnode: Mithril.VnodeDOM<Attrs, this>) {
+  oncreate(vnode: RenderAttrsDOM<Attrs, this>) {
     this.element = vnode.dom;
   }
 
   /**
    * @inheritdoc
    */
-  onbeforeupdate(vnode: Mithril.VnodeDOM<Attrs, this>) {
-    this.setAttrs(vnode.attrs);
+  onbeforeupdate(vnode: RenderAttrsDOM<Attrs, this>) {
   }
 
   /**
    * @inheritdoc
    */
-  onupdate(vnode: Mithril.VnodeDOM<Attrs, this>) {}
+  onupdate(vnode: RenderAttrsDOM<Attrs, this>) {}
 
   /**
    * @inheritdoc
    */
-  onbeforeremove(vnode: Mithril.VnodeDOM<Attrs, this>) {}
+  onbeforeremove(vnode: RenderAttrs<Attrs, this>) {}
 
   /**
    * @inheritdoc
    */
-  onremove(vnode: Mithril.VnodeDOM<Attrs, this>) {}
+  onremove(vnode: RenderAttrs<Attrs, this>) {}
 
   /**
    * Returns a jQuery object for this component's element. If you pass in a

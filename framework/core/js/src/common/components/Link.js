@@ -15,7 +15,7 @@ export default class Link extends Component {
 
     attrs.href ||= '';
 
-    const children = vnode.children;
+    const children = attrs.children ?? vnode.children;
 
     if (attrs.external) {
       return <a {...attrs}>{children}</a>;

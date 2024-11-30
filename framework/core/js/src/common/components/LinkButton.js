@@ -27,9 +27,11 @@ export default class LinkButton extends Button {
   view(vnode) {
     const vdom = super.view(vnode);
 
-    vdom.tag = Link;
-    vdom.attrs.active = String(vdom.attrs.active);
-    delete vdom.attrs.type;
+    vdom.m = (vdom.m & ~m.TYPE_MASK) | (m.TYPE_COMPONENT & m.TYPE_MASK);; // make it component
+    vdom.t = m.component(Link);
+    vdom.a.children = vdom.c;
+    vdom.a.active = String(vdom.a.active);
+    delete vdom.a.type;
 
     return vdom;
   }
