@@ -8,14 +8,15 @@ interface Redraw {
 }
 
 interface Context {
-  redraw: Redraw
+  redraw: Redraw,
+  [x: string]: any,
 }
 
-interface RenderAttrs<Attrs = {}, State = {}> {
+export interface RenderAttrs<Attrs = {}, State = {}> {
   attrs: Attrs
 }
 
-interface RenderAttrsDOM<Attrs = {}, State = {}> extends RenderAttrs<Attrs, State> {
+export interface RenderAttrsDOM<Attrs = {}, State = {}> extends RenderAttrs<Attrs, State> {
   dom: HTMLElement
 }
 
@@ -23,7 +24,7 @@ interface RenderAttrsDOM<Attrs = {}, State = {}> extends RenderAttrs<Attrs, Stat
  * The `Component` class defines a user interface 'building block'. A component
  * generates a virtual DOM to be rendered on each redraw.
  *
- * Essentially, this is a wrapper for Mithril's components that adds several useful features:
+ * This base component provides several useful features:
  *
  *  - In the `oninit` and `onbeforeupdate` lifecycle hooks, we store vnode attrs in `this.attrs.
  *    This allows us to use attrs across components without having to pass the vnode to every single
@@ -43,8 +44,6 @@ interface RenderAttrsDOM<Attrs = {}, State = {}> extends RenderAttrs<Attrs, Stat
  *
  * @example
  * return m('div', MyComponent.component({foo: 'bar'), m('p', 'Hello World!'));
- *
- * @see https://mithril.js.org/components.html
  */
 export default abstract class Component<Attrs extends ComponentAttrs = ComponentAttrs, State = undefined> {
   /**
@@ -83,6 +82,7 @@ export default abstract class Component<Attrs extends ComponentAttrs = Component
    * @inheritdoc
    */
   oninit(vnode: RenderAttrs<Attrs, this>) {
+    this.setAttrs(vnode.attrs);
   }
 
   /**
@@ -96,6 +96,7 @@ export default abstract class Component<Attrs extends ComponentAttrs = Component
    * @inheritdoc
    */
   onbeforeupdate(vnode: RenderAttrsDOM<Attrs, this>) {
+    this.setAttrs(vnode.attrs);
   }
 
   /**

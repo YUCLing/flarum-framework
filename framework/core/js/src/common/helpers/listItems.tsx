@@ -2,6 +2,7 @@ import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from '../Component';
 import Separator from '../components/Separator';
 import classList from '../utils/classList';
+import cloneVnode from '../utils/cloneVnode';
 
 type ModdedVnodeAttrs = {
   itemClassName?: string;
@@ -26,11 +27,11 @@ type ModdedChildren = ModdedChild | ModdedChildArray;
 export type ModdedChildrenWithItemName = ModdedChildren & { itemName?: string };
 
 function isVnode(item: ModdedChildren): item is Mithril.Vnode {
-  return typeof item === 'object' && item !== null && 'tag' in item;
+  return typeof item === 'object' && item !== null && 't' in item;
 }
 
 function isSeparator(item: ModdedChildren): boolean {
-  return isVnode(item) && item.tag === Separator;
+  return isVnode(item) && item.t === m.component(Separator);
 }
 
 function withoutUnnecessarySeparators(items: ModdedChildrenWithItemName[]): ModdedChildrenWithItemName[] {
@@ -65,28 +66,32 @@ export default function listItems<Attrs extends ComponentAttrs>(
   return withoutUnnecessarySeparators(items).map((item) => {
     const classes = [item.itemName && `item-${item.itemName}`];
 
-    if (isVnode(item) && item.tag.isListItem) {
-      item.attrs = item.attrs || {};
-      item.attrs.key = item.attrs.key || item.itemName;
-      item.key = item.attrs.key;
+    if (isVnode(item) && item.t.isListItem) {
+      item.a = item.a || {};
+      item.a.key = item.a.key || item.itemName;
+      item.key = item.a.key; // todo: key is removed in v3
 
       return item;
     }
 
     if (isVnode(item)) {
-      classes.push(item.attrs?.itemClassName || item.itemClassName);
+      classes.push(item.a?.itemClassName || item.itemClassName);
 
-      if (item.tag.isActive?.(item.attrs)) {
+      if (item.t.isActive?.(item.a)) {
         classes.push('active');
       }
     }
 
-    const key = (isVnode(item) && item?.attrs?.key) || item.itemName;
+    const key = (isVnode(item) && item?.a?.key) || item.itemName;
+    const child = <Tag className={classList(classes)} {...attributes}>
+      {cloneVnode(item)}
+    </Tag>;
 
-    return (
-      <Tag className={classList(classes)} key={key} {...attributes}>
-        {item}
-      </Tag>
-    );
+    return key ? m.keyed([key], (key) =>
+    [
+      key,
+      child
+    ]) : child;
   });
 }
+ 

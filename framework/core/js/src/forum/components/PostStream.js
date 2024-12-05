@@ -403,7 +403,7 @@ export default class PostStream extends Component {
     this.stream.forceUpdateScrubber = true;
 
     return Promise.all([$container.promise(), this.stream.loadPromise]).then(() => {
-      m.redraw.sync();
+      this.context.redraw.sync();
 
       // Rendering post contents will probably throw off our position.
       // To counter this, we'll scroll either:

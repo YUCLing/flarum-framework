@@ -137,11 +137,11 @@ export default class DiscussionPage<CustomAttrs extends IDiscussionPageAttrs = I
       } else {
         const params = this.requestParams();
 
-        app.store.find<Discussion>('discussions', m.route.param('id'), params).then(this.show.bind(this));
+        app.store.find<Discussion>('discussions', this.context.appRoute.params.id, params).then(this.show.bind(this));
       }
     });
 
-    m.redraw();
+    this.context.redraw();
   }
 
   /**
@@ -196,7 +196,7 @@ export default class DiscussionPage<CustomAttrs extends IDiscussionPageAttrs = I
     // posts we want to display. Tell the stream to scroll down and highlight
     // the specific post that was routed to.
     this.stream = new PostStreamState(discussion, includedPosts);
-    const rawNearParam = m.route.param('near');
+    const rawNearParam = this.context.appRoute.params.near;
     const nearParam = rawNearParam === 'reply' ? 'reply' : parseInt(rawNearParam);
     this.stream.goToNumber(nearParam || (includedPosts[0]?.number() ?? 0), true).then(() => {
       this.discussion = discussion;
@@ -252,7 +252,7 @@ export default class DiscussionPage<CustomAttrs extends IDiscussionPageAttrs = I
     // state and redraw.
     if (app.session.user && endNumber > (discussion.lastReadPostNumber() || 0)) {
       discussion.save({ lastReadPostNumber: endNumber });
-      m.redraw();
+      this.context.redraw();
     }
   }
 }

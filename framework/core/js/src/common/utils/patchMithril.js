@@ -1,10 +1,6 @@
 import Component from '../Component';
 import bidi from './bidi';
 
-function isClass(x) {
-  return typeof x === 'function' && x.prototype && !Object.getOwnPropertyDescriptor(x, 'prototype').writable;
-}
-
 /**
  * Create a function component from Component class.
  * @param {Component} comp 
@@ -23,7 +19,6 @@ function createComponentFunc(comp) {
     const isInit = !old?.__component;
 
     inst.context = this;
-    inst.setAttrs(compAttrs);
     if (isInit) {
       inst.oninit(vnodeAttrs);
     }
@@ -48,7 +43,7 @@ function createComponentFunc(comp) {
           ...vnodeAttrs,
           dom
         };
-        inst.onbeforeremove(vnodeDOMAttrs);
+        inst.onbeforeremove(vnodeDOMAttrs); // todo: support delayed removal
         inst.onremove(vnodeDOMAttrs);
       })
     ];

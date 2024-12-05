@@ -1,7 +1,9 @@
 import type Mithril from 'mithril';
 import type { AsyncNewComponent, NewComponent, RouteResolver } from '../Application';
-import type { ComponentAttrs } from '../Component';
+import type { ComponentAttrs, RenderAttrs } from '../Component';
 import Component from '../Component';
+import LoadingIndicator from '../components/LoadingIndicator';
+import { app } from '..';
 
 /**
  * Generates a route resolver for a given component.
@@ -34,14 +36,14 @@ export default class DefaultResolver<
     return this.routeName + JSON.stringify(this.params);
   }
 
-  makeAttrs(vnode: Mithril.Vnode<Attrs, Comp>): Attrs & { routeName: string } {
+  makeAttrs(vnode: RenderAttrs<Attrs, Comp>): Attrs & { routeName: string } {
     return {
       ...vnode.attrs,
       routeName: this.routeName,
     };
   }
 
-  async onmatch(args: RouteArgs, requestedPath: string, route: string): Promise<NewComponent<Comp>> {
+  async onmatch(args: RouteArgs, route: any): Promise<NewComponent<Comp>> {
     this.params = args;
     if (this.component.prototype instanceof Component) {
       return this.component as NewComponent<Comp>;
@@ -50,7 +52,18 @@ export default class DefaultResolver<
     return (await (this.component as AsyncNewComponent<Comp>)()).default;
   }
 
-  render(vnode: Mithril.Vnode<Attrs, Comp>): Mithril.Children {
-    return [{ ...vnode, attrs: this.makeAttrs(vnode), key: this.makeKey() }];
+  render(vnode: RenderAttrs<Attrs, Comp>) {
+    let tag = this.component;
+    if (typeof tag === 'function' && !('prototype' in tag)) {
+      tag().then((comp) => {
+        this.component = comp.default;
+        app.redraw.app();
+      });
+      tag = LoadingIndicator;
+    }
+    return m.keyed([this.makeKey()], (key) => [
+      key,
+      m(tag, this.makeAttrs(vnode))
+    ]);
   }
 }

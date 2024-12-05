@@ -4,6 +4,7 @@ import formatNumber from '../../common/utils/formatNumber';
 import ScrollListener from '../../common/utils/ScrollListener';
 import Icon from '../../common/components/Icon';
 import Button from '../../common/components/Button';
+import cloneVnode from '../../common/utils/cloneVnode';
 
 /**
  * The `PostStreamScrubber` component displays a scrubber which can be used to
@@ -37,7 +38,7 @@ export default class PostStreamScrubber extends Component {
     const unreadCount = this.stream.discussion.unreadCount();
     const unreadPercent = count ? Math.min(count - this.stream.index, unreadCount) / count : 0;
 
-    function styleUnread(vnode) {
+    function styleUnread(vnode) { // todo: migrate this
       const $element = $(vnode.dom);
       const newStyle = {
         top: 100 - unreadPercent * 100 + '%',
@@ -59,7 +60,7 @@ export default class PostStreamScrubber extends Component {
     return (
       <div className={classNames.join(' ')}>
         <button className="Button Dropdown-toggle" data-toggle="dropdown">
-          {viewing} <Icon name={'fas fa-sort'} />
+          {cloneVnode(viewing)} <Icon name={'fas fa-sort'} />
         </button>
 
         <div className="Dropdown-menu dropdown-menu">
@@ -73,13 +74,13 @@ export default class PostStreamScrubber extends Component {
               <div className="Scrubber-handle">
                 <div className="Scrubber-bar" />
                 <div className="Scrubber-info">
-                  <strong>{viewing}</strong>
+                  <strong>{cloneVnode(viewing)}</strong>
                   <span className="Scrubber-description"></span>
                 </div>
               </div>
               <div className="Scrubber-after" />
 
-              <div className="Scrubber-unread" oncreate={styleUnread} onupdate={styleUnread}>
+              <div className="Scrubber-unread">
                 {app.translator.trans('core.forum.post_scrubber.unread_text', { count: unreadCount })}
               </div>
             </div>

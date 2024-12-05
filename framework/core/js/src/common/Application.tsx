@@ -252,6 +252,8 @@ export default class Application {
     fontawesome: 'https://fontawesome.com/v6/icons?o=r&m=free',
   };
 
+  redraw: Record<string, typeof m.redraw> = {};
+
   private _title: string = '';
   private _titleCount: number = 0;
 
@@ -347,8 +349,8 @@ export default class Application {
 
   protected mount(basePath: string = '') {
     // An object with a callable view property is used in order to pass arguments to the component; see https://mithril.js.org/mount.html
-    m.mount(document.getElementById('modal')!, () => <ModalManager state={this.modal} />);
-    m.mount(document.getElementById('alerts')!, () => <AlertManager state={this.alerts} />);
+    this.redraw.modal = m.mount(document.getElementById('modal')!, () => <ModalManager state={this.modal} />);
+    this.redraw.alert = m.mount(document.getElementById('alerts')!, () => <AlertManager state={this.alerts} />);
 
     this.drawer = new Drawer();
 
@@ -359,15 +361,22 @@ export default class Application {
           let match;
           if (match = route.match(k)) {
             const r = routes[k];
-            r.onmatch(match, route.path, route.current);
-            return m(r.component, {...match, routeName: r.routeName});
+            const { current, path, params } = route;
+            const routeData = {
+              current,
+              path,
+              params: match,
+              searchParams: params
+            };
+            r.onmatch(match, routeData);
+            return m.set({appRoute: routeData}, r.render({
+              attrs: match
+            }));
           }
         }
-
-        m.set('/');
       });
     }
-    m.mount(document.getElementById('content')!, () => <RoutedApp/>);
+    this.redraw.app = m.mount(document.getElementById('content')!, () => <RoutedApp/>);
 
     const appEl = document.getElementById('app')!;
     const appHeaderEl = document.querySelector('.App-header')!;
