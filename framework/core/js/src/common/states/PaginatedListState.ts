@@ -37,7 +37,7 @@ export interface PaginatedListRequestParams extends Omit<ApiQueryParamsPlural, '
   include?: string | string[];
 }
 
-export default abstract class PaginatedListState<T extends Model, P extends PaginatedListParams = PaginatedListParams> extends EventTarget {
+export default abstract class PaginatedListState<T extends Model, P extends PaginatedListParams = PaginatedListParams> {
   /**
    * This value should not be relied upon when preloading an API document.
    * In those cases the pageSize should be taken from the meta information of the preloaded
@@ -58,7 +58,6 @@ export default abstract class PaginatedListState<T extends Model, P extends Pagi
   protected loadingPage: boolean = false;
 
   protected constructor(params: P = {} as P, page: number = 1, pageSize: number | null = null) {
-    super();
     this.params = params;
 
     this.location = { page };
@@ -70,7 +69,7 @@ export default abstract class PaginatedListState<T extends Model, P extends Pagi
   public clear(): void {
     this.pages = [];
 
-    this.dispatchEvent(new CustomEvent('refresh'));
+    app.redraw.app();
   }
 
   public loadPrev(): Promise<void> {
@@ -116,7 +115,7 @@ export default abstract class PaginatedListState<T extends Model, P extends Pagi
 
     this.location = { page: pageNum };
 
-    this.dispatchEvent(new CustomEvent('refresh'));
+    app.redraw.app();
   }
 
   /**
@@ -323,7 +322,7 @@ export default abstract class PaginatedListState<T extends Model, P extends Pagi
       });
     }
 
-    this.dispatchEvent(new CustomEvent('refresh'));
+    app.redraw.app();
   }
 
   getSort(): string {

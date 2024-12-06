@@ -24,8 +24,6 @@ export default class IndexPage<CustomAttrs extends IIndexPageAttrs = IIndexPageA
   static providesInitialSearch = true;
   lastDiscussion?: Discussion;
 
-  refreshList!: () => void;
-
   oninit(vnode: Mithril.Vnode<CustomAttrs, this>) {
     super.oninit(vnode);
 
@@ -43,11 +41,6 @@ export default class IndexPage<CustomAttrs extends IIndexPageAttrs = IIndexPageA
     if (app.previous.matches(PostsPage)) {
       app.search.state.clear();
     }
-
-    this.refreshList = (() => {
-      this.context.redraw();
-    });
-    app.discussions.addEventListener('refresh', this.refreshList);
 
     // If the user is coming from the discussion list, then they have either
     // just switched one of the parameters (filter, sort, search) or they
@@ -139,8 +132,6 @@ export default class IndexPage<CustomAttrs extends IIndexPageAttrs = IIndexPageA
 
   onremove(vnode: Mithril.VnodeDOM<CustomAttrs, this>) {
     super.onremove(vnode);
-
-    app.discussions.removeEventListener('refresh', this.refreshList);
 
     $('#app').css('min-height', '');
   }
