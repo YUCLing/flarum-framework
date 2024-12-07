@@ -3,7 +3,7 @@ import type Mithril from 'mithril';
 import app from '../../forum/app';
 import DefaultResolver from '../../common/resolvers/DefaultResolver';
 import DiscussionPage, { IDiscussionPageAttrs } from '../components/DiscussionPage';
-import { RenderAttrs } from '../../common/Component';
+import Component, { RenderAttrs } from '../../common/Component';
 
 /**
  * A custom route resolver for DiscussionPage that generates the same key to all posts
@@ -53,7 +53,7 @@ export default class DiscussionPageResolver<
     return super.onmatch(args, route);
   }
 
-  render(vnode: RenderAttrs<Attrs, DiscussionPage<Attrs>>) {
+  render(comp: Component<Attrs>, attrs: Attrs) {
     if (DiscussionPageResolver.scrollToPostNumber !== null) {
       const number = DiscussionPageResolver.scrollToPostNumber;
       // Scroll after a timeout to avoid clashes with the render.
@@ -61,6 +61,6 @@ export default class DiscussionPageResolver<
       DiscussionPageResolver.scrollToPostNumber = null;
     }
 
-    return super.render(vnode);
+    return super.render(comp, attrs);
   }
 }

@@ -69,7 +69,7 @@ export default abstract class PaginatedListState<T extends Model, P extends Pagi
   public clear(): void {
     this.pages = [];
 
-    app.redraw.app();
+    app.redrawAll();
   }
 
   public loadPrev(): Promise<void> {
@@ -115,7 +115,7 @@ export default abstract class PaginatedListState<T extends Model, P extends Pagi
 
     this.location = { page: pageNum };
 
-    app.redraw.app();
+    app.redrawAll();
   }
 
   /**
@@ -322,7 +322,7 @@ export default abstract class PaginatedListState<T extends Model, P extends Pagi
       });
     }
 
-    app.redraw.app();
+    app.redrawAll();
   }
 
   getSort(): string {

@@ -108,10 +108,8 @@ export interface RouteResolver<
    *
    * Returns the component class, and **not** a Vnode or JSX
    * expression.
-   *
-   * @see https://mithril.js.org/route.html#routeresolveronmatch
    */
-  onmatch(this: this, args: RouteArgs, requestedPath: string, route: string): Promise<{ new (): Comp }>;
+  onmatch(this: this, args: RouteArgs, route: any): Promise<{ new (): Comp }>;
   /**
    * A function which renders the provided component.
    *
@@ -119,10 +117,8 @@ export interface RouteResolver<
    * component on its own, inside of a fragment.
    *
    * Returns a Mithril Vnode or other children.
-   *
-   * @see https://mithril.js.org/route.html#routeresolverrender
    */
-  render?(this: this, vnode: Mithril.Vnode<Attrs, Comp>): Mithril.Children;
+  render?(this: this, component: Comp, attrs: Attrs): Mithril.Children;
 }
 
 export enum MaintenanceMode {
@@ -355,6 +351,8 @@ export default class Application {
     this.drawer = new Drawer();
 
     const routes = mapRoutes(this.routes, basePath);
+    let lastRoute: string;
+    let comp: Component | null = null;
     function RoutedApp() {
       return () => m.route('/', ({route}) => {
         for (const k in routes) {
@@ -368,10 +366,19 @@ export default class Application {
               params: match,
               searchParams: params
             };
-            r.onmatch(match, routeData);
-            return m.set({appRoute: routeData}, r.render({
-              attrs: match
-            }));
+            if (lastRoute != current) {
+              lastRoute = current;
+              r.onmatch(match, routeData).then((c: any) => {
+                comp = c;
+                this.redraw();
+              });
+            }
+            return comp ?
+              m.set({appRoute: routeData}, r.render ?
+                r.render(comp, match) :
+                m(comp, match)
+              ) :
+              m('div');
           }
         }
       });
@@ -531,6 +538,12 @@ export default class Application {
     // Actual source of the issue: https://github.com/flarum/framework/issues/3685
     const parser = new DOMParser();
     document.title = parser.parseFromString(title, 'text/html').body.innerText;
+  }
+
+  redrawAll() {
+    for (const k in app.redraw) {
+      app.redraw[k]();
+    }
   }
 
   protected transformRequestOptions<ResponseType>(flarumOptions: FlarumRequestOptions<ResponseType>): InternalFlarumRequestOptions<ResponseType> {

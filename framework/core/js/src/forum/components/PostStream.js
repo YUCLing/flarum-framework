@@ -112,7 +112,10 @@ export default class PostStream extends Component {
 
     return (
       <div className="PostStream" role="feed" aria-live="off" aria-busy={this.stream.pagesLoading ? 'true' : 'false'}>
-        {items}
+        {m.keyed(items, (item) => [
+          item.a.key,
+          item
+        ])}
       </div>
     );
   }

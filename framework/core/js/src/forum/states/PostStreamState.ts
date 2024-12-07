@@ -138,7 +138,7 @@ export default class PostStreamState {
     this.animateScroll = !noAnimation;
     this.index = index;
 
-    app.redraw.app();
+    app.redrawAll();
 
     return this.loadPromise;
   }

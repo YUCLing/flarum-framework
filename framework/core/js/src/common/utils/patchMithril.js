@@ -31,12 +31,13 @@ function createComponentFunc(comp) {
         };
         if (isInit) {
           inst.oncreate(vnodeDOMAttrs);
-        } else {
-          if (inst.onbeforeupdate(vnodeDOMAttrs) === false) {
-            children.push(m.retain());
-          }
-          inst.onupdate(vnodeDOMAttrs);
+          return;
         }
+        if (inst.onbeforeupdate(vnodeDOMAttrs) === false) {
+          children.push(m.retain());
+          return;
+        }
+        inst.onupdate(vnodeDOMAttrs);
       }),
       m.remove((dom) => {
         const vnodeDOMAttrs = {
