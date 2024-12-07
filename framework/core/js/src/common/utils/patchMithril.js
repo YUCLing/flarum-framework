@@ -1,3 +1,4 @@
+import { app } from '..';
 import Component from '../Component';
 import bidi from './bidi';
 
@@ -175,7 +176,13 @@ export default function patchMithril(global) {
   }
 
   modifiedMithril.redraw = function () {
-    console.warn('global redraw is not available in v3');
+    console.warn('global redraw is not available in v3, using managed global redraw for now');
+    app.redrawAll();
+  }
+
+  modifiedMithril.redraw.sync = function() {
+    console.warn('global redraw is not available in v3, using managed global redraw for now');
+    app.redrawAll(true);
   }
 
   modifiedMithril.trust = function (html) {

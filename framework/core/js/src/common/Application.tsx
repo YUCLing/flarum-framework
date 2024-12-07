@@ -540,9 +540,13 @@ export default class Application {
     document.title = parser.parseFromString(title, 'text/html').body.innerText;
   }
 
-  redrawAll() {
+  redrawAll(sync = false) {
     for (const k in app.redraw) {
-      app.redraw[k]();
+      const redraw = app.redraw[k];
+      if (sync)
+        redraw.sync();
+      else
+        redraw();
     }
   }
 
