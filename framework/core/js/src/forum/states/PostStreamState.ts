@@ -122,7 +122,7 @@ export default class PostStreamState {
     // start scrolling to items. Calling redraw early causes issues.
     // Since this is only used for external navigation to the post stream, the delay
     // before the stream is moved is not an issue.
-    return this.loadPromise.then(() => app.redraw.app());
+    return this.loadPromise.then(() => app.redrawAll());
   }
 
   /**
