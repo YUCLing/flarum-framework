@@ -170,6 +170,11 @@ export default function patchMithril(global) {
     return app.routing.current;
   }
 
+  modifiedMithril.route.set = function(link) {
+    console.warn('m.route.set is not available in v3, falling back to managed routing');
+    app.routing.set(link);
+  }
+
   modifiedMithril.redraw = function () {
     console.warn('global redraw is not available in v3, using managed global redraw for now');
     app.redrawAll();

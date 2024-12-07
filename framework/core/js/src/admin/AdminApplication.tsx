@@ -147,11 +147,11 @@ export default class AdminApplication extends Application {
 
     super.mount('', '#');
 
-    m.mount(document.getElementById('app-navigation')!, () => <Navigation className="App-backControl" drawer />);
-    m.mount(document.getElementById('header-navigation')!, () => <Navigation />);
-    m.mount(document.getElementById('header-primary')!, () => <HeaderPrimary />);
-    m.mount(document.getElementById('header-secondary')!, () => <HeaderSecondary />);
-    m.mount(document.getElementById('admin-navigation')!, () => <AdminNav />);
+    this.redraw.navigation = m.mount(document.getElementById('app-navigation')!, () => <Navigation className="App-backControl" drawer />);
+    this.redraw.headerNavigation = m.mount(document.getElementById('header-navigation')!, () => <Navigation />);
+    this.redraw.headerPrimary = m.mount(document.getElementById('header-primary')!, () => <HeaderPrimary />);
+    this.redraw.headerSecondary = m.mount(document.getElementById('header-secondary')!, () => <HeaderSecondary />);
+    this.redraw.adminNav = m.mount(document.getElementById('admin-navigation')!, () => <AdminNav />);
   }
 
   getRequiredPermissions(permission: string) {
