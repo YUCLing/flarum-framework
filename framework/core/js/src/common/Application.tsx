@@ -345,7 +345,7 @@ export default class Application {
     });
   }
 
-  protected mount(basePath: string = '') {
+  protected mount(routePrefix = '/', basePath: string = '') {
     // An object with a callable view property is used in order to pass arguments to the component; see https://mithril.js.org/mount.html
     this.redraw.modal = m.mount(document.getElementById('modal')!, () => <ModalManager state={this.modal} />);
     this.redraw.alert = m.mount(document.getElementById('alerts')!, () => <AlertManager state={this.alerts} />);
@@ -357,7 +357,7 @@ export default class Application {
     let lastRoute: string;
     let comp: Component | null = null;
     function RoutedApp() {
-      return () => m.route('/', ({route}) => {
+      return () => m.route(routePrefix, ({route}) => {
         for (const k in routes) {
           let match;
           if (match = route.match(k)) {

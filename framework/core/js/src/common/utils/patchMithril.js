@@ -167,12 +167,12 @@ export default function patchMithril(global) {
   }
 
   modifiedMithril.route.param = function (k) {
-    console.warn('m.route.param is not available in v3');
+    console.warn('m.route.param is not available in v3, falling back to managed routing');
     return app.routing.params[k];
   }
 
   modifiedMithril.route.get = function () {
-    console.warn('m.route.get is not available in v3');
+    console.warn('m.route.get is not available in v3, falling back to managed routing');
     return app.routing.current;
   }
 
