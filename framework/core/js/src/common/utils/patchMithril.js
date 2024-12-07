@@ -112,6 +112,37 @@ function Trust(attrs) {
   ];
 }
 
+// from mithril, modified
+const Link = () => {
+	var href, opts, setRoute
+	var listener = (ev) => {
+		if (
+			!ev.defaultPrevented &&
+			(ev.button === 0 || ev.which === 0 || ev.which === 1) &&
+			(!ev.currentTarget.target || ev.currentTarget.target === "_self") &&
+			!ev.ctrlKey && !ev.metaKey && !ev.shiftKey && !ev.altKey
+		) {
+			setRoute(href, opts)
+			return m.capture(ev)
+		}
+	}
+
+	return function (attrs, old) {
+		setRoute = app.routing.set
+		href = attrs.h
+		opts = attrs.o
+		return [
+			m.layout((dom) => {
+				dom.href = app.routing.prefix + href
+				if (!old) dom.addEventListener("click", listener)
+			}),
+			m.remove((dom) => {
+				dom.removeEventListener("click", listener)
+			}),
+		]
+	}
+}
+
 function getOrCreateComponentFunc(comp) {
   let func = componentFuncs.get(comp);
   if (!func) {
@@ -131,12 +162,13 @@ export default function patchMithril(global) {
 
     if (comp === '__LINK__') {
       const attrs = args[0];
-      const className = attrs.className ?? attrs.class ?? '';
-      const classes = className != '' ? className.split(' ') : [];
       return defaultMithril(
-        'a' + classes.map((v) => '.' + v).join(''),
-        // this doesn't work since other roots won't have a router.
-        /*defaultMithril.link(attrs.href, attrs.options)*/ { ...attrs, className: undefined, class: undefined },
+        'a',
+        {
+          className: attrs.className,
+          class: attrs.class
+        },
+        m(Link, {h: `${attrs.href}`, o: attrs.options}),
         args.slice(1)
       );
     }

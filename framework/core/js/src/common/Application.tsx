@@ -345,7 +345,7 @@ export default class Application {
     });
   }
 
-  protected mount(routePrefix = '/', basePath: string = '') {
+  protected mount(basePath: string = '', routePrefix: string = '') {
     // An object with a callable view property is used in order to pass arguments to the component; see https://mithril.js.org/mount.html
     this.redraw.modal = m.mount(document.getElementById('modal')!, () => <ModalManager state={this.modal} />);
     this.redraw.alert = m.mount(document.getElementById('alerts')!, () => <AlertManager state={this.alerts} />);

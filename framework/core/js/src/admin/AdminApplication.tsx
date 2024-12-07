@@ -145,7 +145,7 @@ export default class AdminApplication extends Application {
     // we need to go to https://example.com/admin#/ explicitly.
     if (!document.location.hash) document.location.hash = '#/';
 
-    super.mount('#');
+    super.mount('', '#');
 
     m.mount(document.getElementById('app-navigation')!, () => <Navigation className="App-backControl" drawer />);
     m.mount(document.getElementById('header-navigation')!, () => <Navigation />);
