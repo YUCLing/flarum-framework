@@ -116,6 +116,7 @@ function getOrCreateComponentFunc(comp) {
   let func = componentFuncs.get(comp);
   if (!func) {
     componentFuncs.set(comp, func = createComponentFunc(comp));
+    func.Component = comp;
   }
   return func;
 }
@@ -165,14 +166,14 @@ export default function patchMithril(global) {
     return getOrCreateComponentFunc(comp);
   }
 
-  modifiedMithril.route.param = function () {
+  modifiedMithril.route.param = function (k) {
     console.warn('m.route.param is not available in v3');
-    return '';
+    return app.routing.params[k];
   }
 
   modifiedMithril.route.get = function () {
     console.warn('m.route.get is not available in v3');
-    return '';
+    return app.routing.current;
   }
 
   modifiedMithril.redraw = function () {

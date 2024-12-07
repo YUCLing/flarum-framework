@@ -240,6 +240,8 @@ export default class Application {
   history: IHistory | null = null;
   pane: any = null;
 
+  routing!: any;
+
   data!: ApplicationData;
 
   allowUserColorScheme!: boolean;
@@ -351,6 +353,7 @@ export default class Application {
     this.drawer = new Drawer();
 
     const routes = mapRoutes(this.routes, basePath);
+    const appRef = this;
     let lastRoute: string;
     let comp: Component | null = null;
     function RoutedApp() {
@@ -363,6 +366,11 @@ export default class Application {
             const routeData = {
               current,
               path,
+              params: match,
+              searchParams: params
+            };
+            appRef.routing = {
+              ...route,
               params: match,
               searchParams: params
             };
