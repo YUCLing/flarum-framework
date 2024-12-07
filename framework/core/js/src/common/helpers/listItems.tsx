@@ -69,9 +69,12 @@ export default function listItems<Attrs extends ComponentAttrs>(
     if (isVnode(item) && item.t.isListItem) {
       item.a = item.a || {};
       item.a.key = item.a.key || item.itemName;
-      item.key = item.a.key; // todo: key is removed in v3
+      const key = item.a.key;
 
-      return item;
+      return m.keyed([key], (key) => [
+        key,
+        item
+      ]);
     }
 
     if (isVnode(item)) {
