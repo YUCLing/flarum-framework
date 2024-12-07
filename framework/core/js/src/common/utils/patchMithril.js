@@ -15,12 +15,18 @@ function createComponentFunc(comp) {
     const vnodeAttrs = {
       attrs: compAttrs
     };
-
+    
     const isInit = !old?.__component;
+    let beforeUpdateResult;
 
     inst.context = this;
     if (isInit) {
       inst.oninit(vnodeAttrs);
+    } else {
+      beforeUpdateResult = inst.onbeforeupdate({
+        ...vnodeAttrs,
+        dom: inst.element // the dom must be existing since this is not the first time it got rendered.
+      });
     }
 
     const children = [
@@ -33,7 +39,7 @@ function createComponentFunc(comp) {
           inst.oncreate(vnodeDOMAttrs);
           return;
         }
-        if (inst.onbeforeupdate(vnodeDOMAttrs) === false) {
+        if (beforeUpdateResult === false) {
           children.push(m.retain());
           return;
         }
