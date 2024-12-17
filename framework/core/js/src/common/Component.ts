@@ -3,21 +3,21 @@ import type Mithril from 'mithril';
 export interface ComponentAttrs extends Mithril.Attributes {}
 
 interface Redraw {
-  (): typeof m.redraw,
-  sync: typeof m.redraw.sync
+  (): typeof m.redraw;
+  sync: typeof m.redraw.sync;
 }
 
 interface Context {
-  redraw: Redraw,
-  [x: string]: any,
+  redraw: Redraw;
+  [x: string]: any;
 }
 
 export interface RenderAttrs<Attrs = {}, State = {}> {
-  attrs: Attrs
+  attrs: Attrs;
 }
 
 export interface RenderAttrsDOM<Attrs = {}, State = {}> extends RenderAttrs<Attrs, State> {
-  dom: HTMLElement
+  dom: HTMLElement;
 }
 
 /**

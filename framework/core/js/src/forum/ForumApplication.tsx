@@ -115,11 +115,11 @@ export default class ForumApplication extends Application {
     // We mount navigation and header components after the page, so components
     // like the back button can access the updated state when rendering.
     m.mount(document.getElementById('app-navigation')!, () => <Navigation className="App-backControl" drawer />);
-    m.mount(document.getElementById('header-navigation')!, () => <Navigation/>);
-    m.mount(document.getElementById('header-primary')!, () => <HeaderPrimary/>);
-    m.mount(document.getElementById('header-secondary')!, () => <HeaderSecondary/>);
-    m.mount(document.getElementById('notices')!, () => <Notices/>);
-    m.mount(document.getElementById('footer')!, () => <Footer/>);
+    m.mount(document.getElementById('header-navigation')!, () => <Navigation />);
+    m.mount(document.getElementById('header-primary')!, () => <HeaderPrimary />);
+    m.mount(document.getElementById('header-secondary')!, () => <HeaderSecondary />);
+    m.mount(document.getElementById('notices')!, () => <Notices />);
+    m.mount(document.getElementById('footer')!, () => <Footer />);
 
     // Route the home link back home when clicked. We do not want it to register
     // if the user is opening it in a new tab, however.

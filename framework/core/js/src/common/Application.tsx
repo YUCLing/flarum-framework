@@ -357,41 +357,37 @@ export default class Application {
     let lastRoute: string;
     let comp: Component | null = null;
     function RoutedApp() {
-      return () => m.route(routePrefix, ({route}) => {
-        for (const k in routes) {
-          let match;
-          if (match = route.match(k)) {
-            const r = routes[k];
-            const { current, path, params } = route;
-            const routeData = {
-              current,
-              path,
-              params: match,
-              searchParams: params
-            };
-            appRef.routing = {
-              ...route,
-              params: match,
-              searchParams: params
-            };
-            if (lastRoute != current) {
-              lastRoute = current;
-              r.onmatch(match, routeData).then((c: any) => {
-                comp = c;
-                this.redraw();
-              });
+      return () =>
+        m.route(routePrefix, ({ route }) => {
+          for (const k in routes) {
+            let match;
+            if ((match = route.match(k))) {
+              const r = routes[k];
+              const { current, path, params } = route;
+              const routeData = {
+                current,
+                path,
+                params: match,
+                searchParams: params,
+              };
+              appRef.routing = {
+                ...route,
+                params: match,
+                searchParams: params,
+              };
+              if (lastRoute != current) {
+                lastRoute = current;
+                r.onmatch(match, routeData).then((c: any) => {
+                  comp = c;
+                  this.redraw();
+                });
+              }
+              return comp ? m.set({ appRoute: routeData }, r.render ? r.render(comp, match) : m(comp, match)) : m('div');
             }
-            return comp ?
-              m.set({appRoute: routeData}, r.render ?
-                r.render(comp, match) :
-                m(comp, match)
-              ) :
-              m('div');
           }
-        }
-      });
+        });
     }
-    this.redraw.app = m.mount(document.getElementById('content')!, () => <RoutedApp/>);
+    this.redraw.app = m.mount(document.getElementById('content')!, () => <RoutedApp />);
 
     const appEl = document.getElementById('app')!;
     const appHeaderEl = document.querySelector('.App-header')!;
@@ -551,10 +547,8 @@ export default class Application {
   redrawAll(sync = false) {
     for (const k in app.redraw) {
       const redraw = app.redraw[k];
-      if (sync)
-        redraw.sync();
-      else
-        redraw();
+      if (sync) redraw.sync();
+      else redraw();
     }
   }
 

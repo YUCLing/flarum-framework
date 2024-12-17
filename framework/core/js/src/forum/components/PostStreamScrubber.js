@@ -38,7 +38,8 @@ export default class PostStreamScrubber extends Component {
     const unreadCount = this.stream.discussion.unreadCount();
     const unreadPercent = count ? Math.min(count - this.stream.index, unreadCount) / count : 0;
 
-    function styleUnread(vnode) { // todo: migrate this
+    function styleUnread(vnode) {
+      // todo: migrate this
       const $element = $(vnode.dom);
       const newStyle = {
         top: 100 - unreadPercent * 100 + '%',
@@ -80,9 +81,7 @@ export default class PostStreamScrubber extends Component {
               </div>
               <div className="Scrubber-after" />
 
-              <div className="Scrubber-unread">
-                {app.translator.trans('core.forum.post_scrubber.unread_text', { count: unreadCount })}
-              </div>
+              <div className="Scrubber-unread">{app.translator.trans('core.forum.post_scrubber.unread_text', { count: unreadCount })}</div>
             </div>
 
             <Button className="Scrubber-last Button Button--link" onclick={this.goToLast.bind(this)} icon="fas fa-angle-double-down">

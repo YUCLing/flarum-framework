@@ -71,10 +71,7 @@ export default function listItems<Attrs extends ComponentAttrs>(
       item.a.key = item.a.key || item.itemName;
       const key = item.a.key;
 
-      return m.keyed([key], (key) => [
-        key,
-        item
-      ]);
+      return m.keyed([key], (key) => [key, item]);
     }
 
     if (isVnode(item)) {
@@ -86,15 +83,12 @@ export default function listItems<Attrs extends ComponentAttrs>(
     }
 
     const key = (isVnode(item) && item?.a?.key) || item.itemName;
-    const child = <Tag className={classList(classes)} {...attributes}>
-      {cloneVnode(item)}
-    </Tag>;
+    const child = (
+      <Tag className={classList(classes)} {...attributes}>
+        {cloneVnode(item)}
+      </Tag>
+    );
 
-    return key ? m.keyed([key], (key) =>
-    [
-      key,
-      child
-    ]) : child;
+    return key ? m.keyed([key], (key) => [key, child]) : child;
   });
 }
- 

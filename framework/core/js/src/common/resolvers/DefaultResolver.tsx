@@ -52,9 +52,6 @@ export default class DefaultResolver<
   }
 
   render(comp: Comp, attrs: Attrs) {
-    return m.keyed([this.makeKey()], (key) => [
-      key,
-      m(comp, this.makeAttrs(attrs))
-    ]);
+    return m.keyed([this.makeKey()], (key) => [key, m(comp, this.makeAttrs(attrs))]);
   }
 }
